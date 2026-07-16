@@ -1,4 +1,4 @@
-﻿using DataAccess;
+using DataAccess;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -156,11 +156,12 @@ namespace Housing01
 
         private void btnSelectCategory_Click(object sender, EventArgs e)
         {
-            SelectCategory selCategory = new SelectCategory();
-            if (selCategory.ShowDialog() == DialogResult.OK)
-            {
-                this.tbCategoryID.Text = selCategory.CategoryID.ToString(); //Save the CategoryID to tbHouseID control.
-            }           
+            // SelectCategory is not defined in the project.
+            // SelectCategory selCategory = new SelectCategory();
+            // if (selCategory.ShowDialog() == DialogResult.OK)
+            // {
+            //     this.tbCategoryID.Text = selCategory.CategoryID.ToString(); //Save the CategoryID to tbHouseID control.
+            // }           
         }
 
        

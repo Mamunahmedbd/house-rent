@@ -52,6 +52,12 @@
     <Compile Include="Elegent House.Designer.cs">
       <DependentUpon>Elegent House.cs</DependentUpon>
     </Compile>
+    <Compile Include="Elegent Housing System.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Elegent Housing System.Designer.cs">
+      <DependentUpon>Elegent Housing System.cs</DependentUpon>
+    </Compile>
     <Compile Include="HouseForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -82,6 +88,9 @@
     </Compile>
     <EmbeddedResource Include="Elegent House.resx">
       <DependentUpon>Elegent House.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Elegent Housing System.resx">
+      <DependentUpon>Elegent Housing System.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="HouseForm.resx">
       <DependentUpon>HouseForm.cs</DependentUpon>

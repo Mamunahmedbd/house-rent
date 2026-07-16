@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 
 namespace ElegantHousingSystem
@@ -15,7 +15,7 @@ namespace ElegantHousingSystem
         {
             if (txtUser.Text == "admin" && txtPass.Text == "1234")
             {
-                btnExi mainForm = new ElegentHouse.cs();
+                Form1 mainForm = new Form1();
                 mainForm.Show();
                 this.Hide();
             }
