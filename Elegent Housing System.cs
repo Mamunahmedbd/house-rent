@@ -32,26 +32,23 @@ namespace ElegantHousingSystem
             childForm.FormBorderStyle = FormBorderStyle.None;
             childForm.StartPosition = FormStartPosition.Manual; // Prevent default screen centering behavior
             
+            // Reset font and disable AutoScale to prevent inheriting the dashboard's large Segoe Script font
+            childForm.Font = new System.Drawing.Font("Segoe UI", 9F);
+            childForm.AutoScaleMode = AutoScaleMode.None;
+            
             // Prevent child form from shrinking below its designed layout bounds
             childForm.MinimumSize = childForm.Size;
             
             // Add to panel first to ensure parent-relative coordinates are active
             pnlContent.Controls.Add(childForm);
             
-            if (childForm is UserManagerForm)
-            {
-                childForm.Dock = DockStyle.Fill;
-            }
-            else
-            {
-                // Center the form inside pnlContent
-                // Use Math.Max(0, ...) to ensure coordinates never go negative, allowing full scrolling
-                childForm.Location = new System.Drawing.Point(
-                    Math.Max(0, (pnlContent.Width - childForm.Width) / 2),
-                    Math.Max(0, (pnlContent.Height - childForm.Height) / 2)
-                );
-                childForm.Anchor = AnchorStyles.None; // Maintain centering on resize
-            }
+            // Center the form inside pnlContent
+            // Use Math.Max(0, ...) to ensure coordinates never go negative, allowing full scrolling
+            childForm.Location = new System.Drawing.Point(
+                Math.Max(0, (pnlContent.Width - childForm.Width) / 2),
+                Math.Max(0, (pnlContent.Height - childForm.Height) / 2)
+            );
+            childForm.Anchor = AnchorStyles.None; // Maintain centering on resize
             
             childForm.Show();
         }

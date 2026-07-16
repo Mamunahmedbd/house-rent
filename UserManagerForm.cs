@@ -24,6 +24,8 @@ namespace ElegantHousingSystem
             this.BackColor = Color.FromArgb(243, 244, 246); // Modern Light Gray Background
             this.StartPosition = FormStartPosition.Manual;
             this.FormBorderStyle = FormBorderStyle.None;
+            this.Font = new Font("Segoe UI", 9F);
+            this.AutoScaleMode = AutoScaleMode.None;
             this.MaximizeBox = false;
 
             // Display Access Warning if user is not Admin
