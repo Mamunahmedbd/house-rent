@@ -144,5 +144,11 @@ namespace ElegantHousingSystem
                 );
             }
         }
+
+        public void ClearFields()
+        {
+            txtPass.Text = "";
+            txtUser.Focus();
+        }
     }
 }

@@ -8,6 +8,7 @@ namespace ElegantHousingSystem
         public static string CurrentUsername = "";
         public static string CurrentUserRole = "";
         private Form activeChildForm = null;
+        private bool isLoggingOut = false;
 
         public Form1()
         {
@@ -20,9 +21,31 @@ namespace ElegantHousingSystem
             };
         }
 
-        private void pictureBox5_Click(object sender, EventArgs e)
+        private void button3_Click(object sender, EventArgs e)
         {
-            Application.Exit();
+            DialogResult result = MessageBox.Show("Are you sure you want to log out?", "Confirm Logout", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
+            {
+                isLoggingOut = true;
+
+                Form loginForm = Application.OpenForms["Form2"];
+                if (loginForm != null)
+                {
+                    Form2 lf = loginForm as Form2;
+                    if (lf != null)
+                    {
+                        lf.ClearFields();
+                    }
+                    loginForm.Show();
+                }
+                else
+                {
+                    Form2 newLoginForm = new Form2();
+                    newLoginForm.Show();
+                }
+
+                this.Close();
+            }
         }
 
         private void CenterChildForm(Form childForm)
@@ -98,6 +121,15 @@ namespace ElegantHousingSystem
         private void btnUserManager_Click(object sender, EventArgs e)
         {
             ShowFormInContentPanel(new UserManagerForm());
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            base.OnFormClosed(e);
+            if (!isLoggingOut)
+            {
+                Application.Exit();
+            }
         }
     }
 }
