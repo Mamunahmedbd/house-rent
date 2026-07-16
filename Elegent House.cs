@@ -8,7 +8,61 @@ namespace ElegantHousingSystem
         public Form2()
         {
             InitializeComponent();
+            SetupCustomInteractions();
         }
+
+        #region Modern UI Setup & Event Handlers
+
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern bool ReleaseCapture();
+        
+        private const int WM_NCLBUTTONDOWN = 0xA1;
+        private const int HT_CAPTION = 0x2;
+
+        private void SetupCustomInteractions()
+        {
+            // Wire dragging events to the background form and elements to allow moving the borderless form
+            this.MouseDown += DragForm_MouseDown;
+            this.pnlCard.MouseDown += DragForm_MouseDown;
+            this.lblTitle.MouseDown += DragForm_MouseDown;
+            this.lblSubtitle.MouseDown += DragForm_MouseDown;
+            this.picLogo.MouseDown += DragForm_MouseDown;
+
+            // Highlight border (panel BackColor) when text box gets focus
+            txtUser.Enter += (s, e) => pnlUserBorder.BackColor = System.Drawing.Color.FromArgb(59, 130, 246);
+            txtUser.Leave += (s, e) => pnlUserBorder.BackColor = System.Drawing.Color.FromArgb(40, 48, 64);
+
+            txtPass.Enter += (s, e) => pnlPassBorder.BackColor = System.Drawing.Color.FromArgb(59, 130, 246);
+            txtPass.Leave += (s, e) => pnlPassBorder.BackColor = System.Drawing.Color.FromArgb(40, 48, 64);
+        }
+
+        private void DragForm_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                ReleaseCapture();
+                SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+            }
+        }
+
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void btnForgetPassword_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(
+                "Please contact your system administrator to reset your password.",
+                "Forget Password Help",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            );
+        }
+
+        #endregion
 
         // Login Button Click Event
         private void btnLogin_Click(object sender, EventArgs e)
@@ -39,19 +93,29 @@ namespace ElegantHousingSystem
                 }
                 else
                 {
-                    MessageBox.Show("Invalid Username or Password!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(
+                        "Invalid Username or Password!\n\n" +
+                        "Default Accounts:\n" +
+                        "- Username: admin  | Password: 1234\n" +
+                        "- Username: manager1 | Password: 1234\n" +
+                        "- Username: user1   | Password: 1234", 
+                        "Login Failed", 
+                        MessageBoxButtons.OK, 
+                        MessageBoxIcon.Error
+                    );
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Login failed due to database error: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    "Login failed due to database connection error.\n\n" +
+                    "Make sure SQL Server is running.\n\n" +
+                    "Error details: " + ex.Message, 
+                    "Database Connection Error", 
+                    MessageBoxButtons.OK, 
+                    MessageBoxIcon.Error
+                );
             }
-        }
-
-        // Exit Button Click Event
-        private void btnExitLogin_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
         }
     }
 }

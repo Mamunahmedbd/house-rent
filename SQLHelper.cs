@@ -4,74 +4,133 @@ using System.Linq;
 using System.Text;
 using System.Data;
 using System.Data.SqlClient;
+using System.Configuration;
 
 namespace DataAccess
 {
     public class SQLHelper
     {
-        public static string connStr = "Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=HouseRental;Data Source=.\\SQLEXPRESS";
+        public static string connStr = GetConnectionString();
+
+        private static string GetConnectionString()
+        {
+            try
+            {
+                string configVal = ConfigurationManager.AppSettings["DB_CONNECTION_STRING"];
+                if (!string.IsNullOrEmpty(configVal))
+                {
+                    return configVal;
+                }
+            }
+            catch { }
+            return "Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=HouseRental;Data Source=.\\SQLEXPRESS";
+        }
 
         public static void InitializeDatabase()
         {
-            string masterConnStr = connStr.Replace("Initial Catalog=HouseRental", "Initial Catalog=master");
-            using (SqlConnection conn = new SqlConnection(masterConnStr))
+            try
             {
-                conn.Open();
-                using (SqlCommand cmd = conn.CreateCommand())
+                SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(connStr);
+                string dbName = builder.InitialCatalog;
+                if (string.IsNullOrEmpty(dbName))
                 {
-                    cmd.CommandText = "SELECT database_id FROM sys.databases WHERE name = 'HouseRental'";
-                    object dbId = cmd.ExecuteScalar();
-                    if (dbId == null || dbId == DBNull.Value)
+                    dbName = "HouseRental";
+                }
+
+                // Connect to master database first to check/create target database
+                builder.InitialCatalog = "master";
+                string masterConnStr = builder.ConnectionString;
+
+                using (SqlConnection conn = new SqlConnection(masterConnStr))
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
                     {
-                        cmd.CommandText = "CREATE DATABASE HouseRental";
-                        cmd.ExecuteNonQuery();
+                        cmd.CommandText = string.Format("SELECT database_id FROM sys.databases WHERE name = '{0}'", dbName.Replace("'", "''"));
+                        object dbId = cmd.ExecuteScalar();
+                        if (dbId == null || dbId == DBNull.Value)
+                        {
+                            cmd.CommandText = string.Format("CREATE DATABASE [{0}]", dbName);
+                            cmd.ExecuteNonQuery();
+                        }
                     }
                 }
-            }
 
-            using (SqlConnection conn = new SqlConnection(connStr))
-            {
-                conn.Open();
-                using (SqlCommand cmd = conn.CreateCommand())
+                // Connect to target database and initialize schema/seeds
+                using (SqlConnection conn = new SqlConnection(connStr))
                 {
-                    // Create Users table
-                    cmd.CommandText = @"
-                        IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND type in (N'U'))
-                        BEGIN
-                            CREATE TABLE [dbo].[Users] (
-                                [UserID] INT IDENTITY(1,1) PRIMARY KEY,
-                                [Username] NVARCHAR(50) NOT NULL UNIQUE,
-                                [Password] NVARCHAR(50) NOT NULL,
-                                [Role] NVARCHAR(50) NOT NULL,
-                                [Email] NVARCHAR(100) NULL,
-                                [Phone] NVARCHAR(50) NULL
-                            );
-                            
-                            INSERT INTO [dbo].[Users] ([Username], [Password], [Role], [Email], [Phone]) 
-                            VALUES ('admin', '1234', 'Admin', 'admin@rental.com', '1234567890');
-                        END";
-                    cmd.ExecuteNonQuery();
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        // Create Users table
+                        cmd.CommandText = @"
+                            IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND type in (N'U'))
+                            BEGIN
+                                CREATE TABLE [dbo].[Users] (
+                                    [UserID] INT IDENTITY(1,1) PRIMARY KEY,
+                                    [Username] NVARCHAR(50) NOT NULL UNIQUE,
+                                    [Password] NVARCHAR(50) NOT NULL,
+                                    [Role] NVARCHAR(50) NOT NULL,
+                                    [Email] NVARCHAR(100) NULL,
+                                    [Phone] NVARCHAR(50) NULL
+                                );
+                                
+                                INSERT INTO [dbo].[Users] ([Username], [Password], [Role], [Email], [Phone]) 
+                                VALUES ('admin', '1234', 'Admin', 'admin@rental.com', '1234567890');
 
-                    // Create HouseInfo table compatible with both schemas
-                    cmd.CommandText = @"
-                        IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[HouseInfo]') AND type in (N'U'))
-                        BEGIN
-                            CREATE TABLE [dbo].[HouseInfo] (
-                                [HouseID] NVARCHAR(50) PRIMARY KEY,
-                                [CategoryID] NVARCHAR(50) NULL,
-                                [Address] NVARCHAR(255) NULL,
-                                [HouseAddress] NVARCHAR(255) NULL,
-                                [Area] NVARCHAR(100) NULL,
-                                [HouseArea] NVARCHAR(100) NULL,
-                                [RentPrice] NVARCHAR(100) NULL,
-                                [Deposit] NVARCHAR(100) NULL,
-                                [IsVacant] NVARCHAR(50) NULL,
-                                [Status] NVARCHAR(50) NULL,
+                                INSERT INTO [dbo].[Users] ([Username], [Password], [Role], [Email], [Phone]) 
+                                VALUES ('manager1', '1234', 'Manager', 'manager1@rental.com', '0987654321');
+
+                                INSERT INTO [dbo].[Users] ([Username], [Password], [Role], [Email], [Phone]) 
+                                VALUES ('user1', '1234', 'User', 'user1@rental.com', '1122334455');
+                            END";
+                        cmd.ExecuteNonQuery();
+
+                        // Create HouseInfo table
+                        cmd.CommandText = @"
+                            IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[HouseInfo]') AND type in (N'U'))
+                            BEGIN
+                                CREATE TABLE [dbo].[HouseInfo] (
+                                    [HouseID] NVARCHAR(50) PRIMARY KEY,
+                                    [CategoryID] NVARCHAR(50) NULL,
+                                    [Address] NVARCHAR(255) NULL,
+                                    [HouseAddress] NVARCHAR(255) NULL,
+                                    [Area] NVARCHAR(100) NULL,
+                                    [HouseArea] NVARCHAR(100) NULL,
+                                    [RentPrice] NVARCHAR(100) NULL,
+                                    [Deposit] NVARCHAR(100) NULL,
+                                    [IsVacant] NVARCHAR(50) NULL,
+                                    [Status] NVARCHAR(50) NULL,
                                 [Introduction] NVARCHAR(MAX) NULL
                             );
                         END";
                     cmd.ExecuteNonQuery();
+
+                    // Create Tenants table
+                    cmd.CommandText = @"
+                        IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Tenants]') AND type in (N'U'))
+                        BEGIN
+                            CREATE TABLE [dbo].[Tenants] (
+                                [TenantID] INT IDENTITY(1,1) PRIMARY KEY,
+                                [FullName] NVARCHAR(100) NOT NULL,
+                                [Gender] NVARCHAR(20) NULL,
+                                [Phone] NVARCHAR(30) NOT NULL,
+                                [Email] NVARCHAR(100) NULL,
+                                [IDNumber] NVARCHAR(50) NULL,
+                                [Occupation] NVARCHAR(100) NULL,
+                                [Address] NVARCHAR(MAX) NULL,
+                                [EmergencyContact] NVARCHAR(30) NULL,
+                                [Status] NVARCHAR(30) NULL,
+                                [RegisteredDate] DATETIME NULL
+                            );
+                        END";
+                    cmd.ExecuteNonQuery();
                 }
+            }
+        }
+            catch (Exception ex)
+            {
+                throw new Exception("Database initialization failed.\n\nConnection String: " + connStr + "\n\nError: " + ex.Message, ex);
             }
         }
         public static DataSet GetData(string sqlStr)
