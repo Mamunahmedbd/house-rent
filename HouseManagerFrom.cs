@@ -1,4 +1,4 @@
-﻿using DataAccess;
+using DataAccess;
 using System;
 using System.Data;
 using System.Drawing;
@@ -8,130 +8,339 @@ namespace ElegantHousingSystem
 {
     public partial class HouseManagerFrom : Form
     {
-        private Label lblTitle;
-        private Label lblHouseNo;
-        private Label lblPrice;
-        private Label lblStatus;
-        private TextBox txtHouseNo;
-        private TextBox txtPrice;
-        private ComboBox cmbStatus;
-        private Button btnSave;
+        private DataTable houseDataTable = null;
 
         public HouseManagerFrom()
         {
             InitializeComponent();
-            InitializeCustomComponents();
+            SetupFormTheme();
+            LoadHouseData();
         }
 
-        private void InitializeCustomComponents()
+        private void SetupFormTheme()
         {
-            this.Text = "House Management System";
-            this.Size = new Size(800, 500);
-            this.BackColor = Color.FromArgb(255, 240, 245);
-            this.StartPosition = FormStartPosition.CenterScreen;
+            this.Text = "House Directory Setup";
+            this.Size = new Size(950, 680);
+            this.BackColor = Color.FromArgb(243, 244, 246);
+            this.StartPosition = FormStartPosition.Manual;
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.Font = new Font("Segoe UI", 9F);
+            this.AutoScaleMode = AutoScaleMode.None;
+            this.MaximizeBox = false;
 
-            lblTitle = new Label();
-            lblTitle.Text = "House Manager Setup";
-            lblTitle.Font = new Font("Segoe UI", 18, FontStyle.Bold);
-            lblTitle.ForeColor = Color.FromArgb(53, 53, 53);
-            lblTitle.Location = new Point(30, 20);
-            lblTitle.Size = new Size(400, 40);
-            this.Controls.Add(lblTitle);
+            bool canModify = (Form1.CurrentUserRole == "Admin" || Form1.CurrentUserRole == "Manager");
 
-            lblHouseNo = new Label();
-
-            lblHouseNo.Location = new Point(40, 90);
-            lblHouseNo.Size = new Size(160, 25);
-            this.Controls.Add(lblHouseNo);
-
-            txtHouseNo = new TextBox();
-            txtHouseNo.Location = new Point(220, 90);
-            txtHouseNo.Size = new Size(200, 25);
-            this.Controls.Add(txtHouseNo);
-
-            lblPrice = new Label();
-            lblPrice.Text = "Rent Price per Month:";
-            lblPrice.Location = new Point(40, 140);
-            lblPrice.Size = new Size(160, 25);
-            this.Controls.Add(lblPrice);
-
-            txtPrice = new TextBox();
-            txtPrice.Location = new Point(220, 140);
-            txtPrice.Size = new Size(200, 25);
-            this.Controls.Add(txtPrice);
-
-            lblStatus = new Label();
-            lblStatus.Text = "Availability Status:";
-            lblStatus.Location = new Point(40, 190);
-            lblStatus.Size = new Size(160, 25);
-            this.Controls.Add(lblStatus);
-
-            cmbStatus = new ComboBox();
-            cmbStatus.Location = new Point(220, 190);
-            cmbStatus.Size = new Size(200, 25);
-            cmbStatus.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbStatus.Items.AddRange(new string[] { "Available", "Rented", "Under Maintenance" });
-            cmbStatus.SelectedIndex = 0;
-            this.Controls.Add(cmbStatus);
-
-            btnSave = new Button();
-            btnSave.Text = "Save House Details";
-            btnSave.BackColor = Color.FromArgb(53, 53, 53);
-            btnSave.ForeColor = Color.White;
-            btnSave.Location = new Point(220, 250);
-            btnSave.Size = new Size(200, 40);
-            btnSave.FlatStyle = FlatStyle.Flat;
-            btnSave.Click += new EventHandler(btnSave_Click);
-            this.Controls.Add(btnSave);
-        }
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            // 1. Check if the fields are not empty
-            if (string.IsNullOrWhiteSpace(label1.Text) || string.IsNullOrWhiteSpace(txtHouseAddress.Text) || string.IsNullOrWhiteSpace(label4.Text))
+            if (!canModify)
             {
-                MessageBox.Show("Please fill in all fields.");
+                lblRoleWarning.Visible = true;
+                btnAdd.Enabled = false;
+                btnUpdate.Enabled = false;
+                btnDelete.Enabled = false;
+                btnClear.Enabled = false;
+
+                txtHouseID.Enabled = false;
+                txtAddress.Enabled = false;
+                txtArea.Enabled = false;
+                txtRentPrice.Enabled = false;
+                txtDeposit.Enabled = false;
+                cmbStatus.Enabled = false;
+                txtIntroduction.Enabled = false;
+
+                btnAdd.BackColor = Color.FromArgb(229, 231, 235);
+                btnUpdate.BackColor = Color.FromArgb(229, 231, 235);
+                btnDelete.BackColor = Color.FromArgb(229, 231, 235);
+            }
+            else
+            {
+                lblRoleWarning.Visible = false;
+            }
+        }
+
+        private void LoadHouseData()
+        {
+            try
+            {
+                string sql = "SELECT HouseID, COALESCE(Address, HouseAddress) AS Address, COALESCE(Area, HouseArea) AS Area, RentPrice, Deposit, Status, Introduction FROM HouseInfo ORDER BY HouseID ASC";
+                DataSet ds = SQLHelper.GetData(sql);
+                if (ds != null && ds.Tables.Count > 0)
+                {
+                    houseDataTable = ds.Tables[0];
+                    dgvHouses.DataSource = houseDataTable;
+                    SetupGridStyle();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to load housing records: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void SetupGridStyle()
+        {
+            if (dgvHouses.Columns.Count == 0) return;
+
+            dgvHouses.EnableHeadersVisualStyles = false;
+            dgvHouses.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(31, 41, 55);
+            dgvHouses.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dgvHouses.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold);
+            dgvHouses.ColumnHeadersHeight = 35;
+            dgvHouses.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+
+            SetColumn("HouseID", "House ID", 90);
+            SetColumn("Address", "Property Address", 200);
+            SetColumn("Area", "Area / Size", 100);
+            SetColumn("RentPrice", "Rent Price ($)", 90);
+            SetColumn("Deposit", "Deposit ($)", 90);
+            SetColumn("Status", "Status", 100);
+            SetColumn("Introduction", "Description", 150);
+
+            dgvHouses.RowHeadersVisible = false;
+            dgvHouses.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(249, 250, 251);
+            dgvHouses.DefaultCellStyle.SelectionBackColor = Color.FromArgb(224, 231, 255);
+            dgvHouses.DefaultCellStyle.SelectionForeColor = Color.FromArgb(49, 46, 129);
+            dgvHouses.DefaultCellStyle.Font = new Font("Segoe UI", 9F);
+
+            dgvHouses.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvHouses.MultiSelect = false;
+            dgvHouses.AllowUserToAddRows = false;
+            dgvHouses.ReadOnly = true;
+            dgvHouses.GridColor = Color.FromArgb(229, 231, 235);
+        }
+
+        private void SetColumn(string name, string header, int width)
+        {
+            if (dgvHouses.Columns.Contains(name))
+            {
+                dgvHouses.Columns[name].HeaderText = header;
+                dgvHouses.Columns[name].Width = width;
+            }
+        }
+
+        private void dgvHouses_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dgvHouses.SelectedRows.Count == 0) return;
+
+            DataGridViewRow row = dgvHouses.SelectedRows[0];
+
+            txtHouseID.Text = CellStr(row, "HouseID");
+            txtHouseID.Enabled = false; // Primary key cannot be changed on update
+
+            txtAddress.Text = CellStr(row, "Address");
+            txtArea.Text = CellStr(row, "Area");
+            txtRentPrice.Text = CellStr(row, "RentPrice");
+            txtDeposit.Text = CellStr(row, "Deposit");
+            txtIntroduction.Text = CellStr(row, "Introduction");
+            SetCombo(cmbStatus, CellStr(row, "Status"));
+        }
+
+        private static string CellStr(DataGridViewRow row, string col)
+        {
+            if (row.DataGridView == null || !row.DataGridView.Columns.Contains(col) || row.Cells[col].Value == null || row.Cells[col].Value == DBNull.Value)
+                return "";
+            return row.Cells[col].Value.ToString();
+        }
+
+        private static void SetCombo(ComboBox cmb, string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                cmb.SelectedIndex = -1;
+                return;
+            }
+            cmb.SelectedIndex = cmb.Items.IndexOf(value);
+        }
+
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            if (houseDataTable == null) return;
+
+            string s = txtSearch.Text.Trim().Replace("'", "''");
+            if (string.IsNullOrEmpty(s))
+            {
+                houseDataTable.DefaultView.RowFilter = "";
+            }
+            else
+            {
+                houseDataTable.DefaultView.RowFilter = string.Format(
+                    "HouseID LIKE '%{0}%' OR Address LIKE '%{0}%' OR Area LIKE '%{0}%' OR RentPrice LIKE '%{0}%' OR Status LIKE '%{0}%'",
+                    s);
+            }
+        }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            string houseID = txtHouseID.Text.Trim();
+            string address = txtAddress.Text.Trim();
+            string area = txtArea.Text.Trim();
+            string rentPrice = txtRentPrice.Text.Trim();
+            string deposit = txtDeposit.Text.Trim();
+            string status = cmbStatus.SelectedItem != null ? cmbStatus.SelectedItem.ToString() : "Available";
+            string introduction = txtIntroduction.Text.Trim();
+
+            if (string.IsNullOrEmpty(houseID) || string.IsNullOrEmpty(address) || string.IsNullOrEmpty(rentPrice))
+            {
+                MessageBox.Show("House ID, Address, and Rent Price are mandatory!", "Validation Alert", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // 2. Add the data to the grid
-            // Ensure that the control names (txtHouseArea, txtAddress, etc.) match those in the Properties
-            dataGridView1.Rows.Add(dataGridView1.Rows.Count + 1, txtHouseArea.Text, txtHouseAddress.Text, txtRentPrice.Text, cmbStatus.Text);
-
-            // 3. Clear the fields after saving
-            txtHouseArea.Clear();
-            txtHouseAddress.Clear();
-            txtRentPrice.Clear();
-            cmbStatus.SelectedIndex = -1;
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            //Insert statement
-            string sqlStr = string.Format("insert into HouseInfo(HouseID,HouseAddress,HouseArea,RentPrice,Status) values('{0}','{1}','{2}','{3}','{4}')",
-                this.txtHouseNo.Text, this.txtHouseAddress.Text, this.txtHouseArea.Text, this.txtRentPrice.Text, this.cmbStatus.SelectedItem.ToString());
-            //Execute the SQL statement by using the ExecuteCmd method of SQLHelper
-            int n = SQLHelper.ExecuteCmd(sqlStr);
-            // If value of n is greater than 0, the meaning is that insert operation is success.
-            if (n > 0)
+            try
             {
-                MessageBox.Show("Insert is success.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                DataSet ds1 = new DataSet();
-                ds1 = this.QueryAll();
-                this.dataGridView1.DataSource = ds1.Tables[0];
-                //this.SetDgvWidth();
+                // Check for duplicate HouseID
+                string checkSql = string.Format("SELECT COUNT(*) FROM HouseInfo WHERE HouseID = '{0}'", houseID.Replace("'", "''"));
+                DataSet ds = SQLHelper.GetData(checkSql);
+                if (ds != null && ds.Tables.Count > 0 && Convert.ToInt32(ds.Tables[0].Rows[0][0]) > 0)
+                {
+                    MessageBox.Show("This House ID is already registered!", "Duplicate Key Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                string isVacant = (status == "Available") ? "Yes" : "No";
+                string insertSql = string.Format(
+                    "INSERT INTO HouseInfo (HouseID, Address, HouseAddress, Area, HouseArea, RentPrice, Deposit, IsVacant, Status, Introduction) " +
+                    "VALUES ('{0}', '{1}', '{1}', '{2}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')",
+                    houseID.Replace("'", "''"),
+                    address.Replace("'", "''"),
+                    area.Replace("'", "''"),
+                    rentPrice.Replace("'", "''"),
+                    deposit.Replace("'", "''"),
+                    isVacant,
+                    status,
+                    introduction.Replace("'", "''")
+                );
+
+                int res = SQLHelper.ExecuteCmd(insertSql);
+                if (res > 0)
+                {
+                    MessageBox.Show("House record added successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    ClearInputs();
+                    LoadHouseData();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Addition failed: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private DataSet QueryAll()//Retrieve all admin info.
+
+        private void btnUpdate_Click(object sender, EventArgs e)
         {
-            string sqlStr = string.Format("select * from HouseInfo");
-            DataSet ds1 = new DataSet();
-            ds1 = SQLHelper.GetData(sqlStr);
-            return ds1;
+            if (dgvHouses.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a house from the list to update.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string houseID = txtHouseID.Text.Trim();
+            string address = txtAddress.Text.Trim();
+            string area = txtArea.Text.Trim();
+            string rentPrice = txtRentPrice.Text.Trim();
+            string deposit = txtDeposit.Text.Trim();
+            string status = cmbStatus.SelectedItem != null ? cmbStatus.SelectedItem.ToString() : "Available";
+            string introduction = txtIntroduction.Text.Trim();
+
+            if (string.IsNullOrEmpty(address) || string.IsNullOrEmpty(rentPrice))
+            {
+                MessageBox.Show("Address and Rent Price are mandatory!", "Validation Alert", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                string isVacant = (status == "Available") ? "Yes" : "No";
+                string updateSql = string.Format(
+                    "UPDATE HouseInfo SET Address = '{0}', HouseAddress = '{0}', Area = '{1}', HouseArea = '{1}', RentPrice = '{2}', Deposit = '{3}', IsVacant = '{4}', Status = '{5}', Introduction = '{6}' " +
+                    "WHERE HouseID = '{7}'",
+                    address.Replace("'", "''"),
+                    area.Replace("'", "''"),
+                    rentPrice.Replace("'", "''"),
+                    deposit.Replace("'", "''"),
+                    isVacant,
+                    status,
+                    introduction.Replace("'", "''"),
+                    houseID.Replace("'", "''")
+                );
+
+                int res = SQLHelper.ExecuteCmd(updateSql);
+                if (res > 0)
+                {
+                    MessageBox.Show("House record updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    ClearInputs();
+                    LoadHouseData();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Update failed: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (dgvHouses.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Please select a house from the list to remove.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string houseID = txtHouseID.Text.Trim();
+
+            DialogResult confirm = MessageBox.Show(
+                string.Format("Are you sure you want to permanently remove house '{0}'?", houseID),
+                "Confirm Removal",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (confirm == DialogResult.Yes)
+            {
+                try
+                {
+                    string deleteSql = string.Format("DELETE FROM HouseInfo WHERE HouseID = '{0}'", houseID.Replace("'", "''"));
+                    int res = SQLHelper.ExecuteCmd(deleteSql);
+                    if (res > 0)
+                    {
+                        MessageBox.Show("House record removed successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        ClearInputs();
+                        LoadHouseData();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Removal failed: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            ClearInputs();
+        }
+
+        private void ClearInputs()
+        {
+            txtHouseID.Text = "";
+            txtAddress.Text = "";
+            txtArea.Text = "";
+            txtRentPrice.Text = "";
+            txtDeposit.Text = "";
+            cmbStatus.SelectedIndex = -1;
+            txtIntroduction.Text = "";
+            txtSearch.Text = "";
+
+            if (Form1.CurrentUserRole == "Admin" || Form1.CurrentUserRole == "Manager")
+            {
+                txtHouseID.Enabled = true; // Allow entering ID for new house
+            }
+
+            if (dgvHouses.SelectedRows.Count > 0)
+            {
+                dgvHouses.ClearSelection();
+            }
+        }
+
         private void HouseManagerFrom_Load(object sender, EventArgs e)
         {
-
+            // Handled in Constructor
         }
     }
 }
