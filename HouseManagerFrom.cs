@@ -38,7 +38,7 @@ namespace ElegantHousingSystem
                 btnDelete.Enabled = false;
                 btnClear.Enabled = false;
 
-                txtHouseID.Enabled = false;
+                cmbHouseID.Enabled = false;
                 txtAddress.Enabled = false;
                 txtArea.Enabled = false;
                 txtRentPrice.Enabled = false;
@@ -67,11 +67,38 @@ namespace ElegantHousingSystem
                     houseDataTable = ds.Tables[0];
                     dgvHouses.DataSource = houseDataTable;
                     SetupGridStyle();
+                    PopulateHouseIDs();
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Failed to load housing records: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void PopulateHouseIDs()
+        {
+            cmbHouseID.Items.Clear();
+            // Add standard H101 - H510 rooms
+            for (int floor = 1; floor <= 5; floor++)
+            {
+                for (int room = 1; room <= 10; room++)
+                {
+                    cmbHouseID.Items.Add($"H{floor}{room:D2}");
+                }
+            }
+
+            // Also dynamically add any other unique house IDs present in the database
+            if (houseDataTable != null)
+            {
+                foreach (DataRow row in houseDataTable.Rows)
+                {
+                    string id = row["HouseID"].ToString();
+                    if (!cmbHouseID.Items.Contains(id))
+                    {
+                        cmbHouseID.Items.Add(id);
+                    }
+                }
             }
         }
 
@@ -122,8 +149,8 @@ namespace ElegantHousingSystem
 
             DataGridViewRow row = dgvHouses.SelectedRows[0];
 
-            txtHouseID.Text = CellStr(row, "HouseID");
-            txtHouseID.Enabled = false; // Primary key cannot be changed on update
+            SetCombo(cmbHouseID, CellStr(row, "HouseID"));
+            cmbHouseID.Enabled = false; // Primary key cannot be changed on update
 
             txtAddress.Text = CellStr(row, "Address");
             txtArea.Text = CellStr(row, "Area");
@@ -169,7 +196,7 @@ namespace ElegantHousingSystem
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            string houseID = txtHouseID.Text.Trim();
+            string houseID = cmbHouseID.SelectedItem != null ? cmbHouseID.SelectedItem.ToString() : "";
             string address = txtAddress.Text.Trim();
             string area = txtArea.Text.Trim();
             string rentPrice = txtRentPrice.Text.Trim();
@@ -230,7 +257,7 @@ namespace ElegantHousingSystem
                 return;
             }
 
-            string houseID = txtHouseID.Text.Trim();
+            string houseID = cmbHouseID.SelectedItem != null ? cmbHouseID.SelectedItem.ToString() : "";
             string address = txtAddress.Text.Trim();
             string area = txtArea.Text.Trim();
             string rentPrice = txtRentPrice.Text.Trim();
@@ -282,7 +309,7 @@ namespace ElegantHousingSystem
                 return;
             }
 
-            string houseID = txtHouseID.Text.Trim();
+            string houseID = cmbHouseID.SelectedItem != null ? cmbHouseID.SelectedItem.ToString() : "";
 
             DialogResult confirm = MessageBox.Show(
                 string.Format("Are you sure you want to permanently remove house '{0}'?", houseID),
@@ -318,7 +345,7 @@ namespace ElegantHousingSystem
 
         private void ClearInputs()
         {
-            txtHouseID.Text = "";
+            cmbHouseID.SelectedIndex = -1;
             txtAddress.Text = "";
             txtArea.Text = "";
             txtRentPrice.Text = "";
@@ -329,7 +356,7 @@ namespace ElegantHousingSystem
 
             if (Form1.CurrentUserRole == "Admin" || Form1.CurrentUserRole == "Manager")
             {
-                txtHouseID.Enabled = true; // Allow entering ID for new house
+                cmbHouseID.Enabled = true; // Allow selecting ID for new house
             }
 
             if (dgvHouses.SelectedRows.Count > 0)

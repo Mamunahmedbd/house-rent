@@ -50,7 +50,7 @@ namespace ElegantHousingSystem
             this.lblArea = new System.Windows.Forms.Label();
             this.txtAddress = new System.Windows.Forms.TextBox();
             this.lblAddress = new System.Windows.Forms.Label();
-            this.txtHouseID = new System.Windows.Forms.TextBox();
+            this.cmbHouseID = new System.Windows.Forms.ComboBox();
             this.lblHouseID = new System.Windows.Forms.Label();
             this.pnlGrid = new System.Windows.Forms.Panel();
             this.lblSearch = new System.Windows.Forms.Label();
@@ -130,7 +130,7 @@ namespace ElegantHousingSystem
             this.pnlInputs.Controls.Add(this.lblArea);
             this.pnlInputs.Controls.Add(this.txtAddress);
             this.pnlInputs.Controls.Add(this.lblAddress);
-            this.pnlInputs.Controls.Add(this.txtHouseID);
+            this.pnlInputs.Controls.Add(this.cmbHouseID);
             this.pnlInputs.Controls.Add(this.lblHouseID);
             this.pnlInputs.Dock = System.Windows.Forms.DockStyle.Left;
             this.pnlInputs.Location = new System.Drawing.Point(0, 80);
@@ -157,7 +157,7 @@ namespace ElegantHousingSystem
             this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClear.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnClear.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(75)))), ((int)(((byte)(85)))), ((int)(((byte)(99)))));
-            this.btnClear.Location = new System.Drawing.Point(180, 530);
+            this.btnClear.Location = new System.Drawing.Point(180, 560);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(140, 38);
             this.btnClear.TabIndex = 18;
@@ -173,7 +173,7 @@ namespace ElegantHousingSystem
             this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDelete.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnDelete.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(38)))), ((int)(((byte)(38)))));
-            this.btnDelete.Location = new System.Drawing.Point(28, 530);
+            this.btnDelete.Location = new System.Drawing.Point(28, 560);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(140, 38);
             this.btnDelete.TabIndex = 17;
@@ -189,7 +189,7 @@ namespace ElegantHousingSystem
             this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnUpdate.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnUpdate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(150)))), ((int)(((byte)(105)))));
-            this.btnUpdate.Location = new System.Drawing.Point(180, 480);
+            this.btnUpdate.Location = new System.Drawing.Point(180, 510);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(140, 38);
             this.btnUpdate.TabIndex = 16;
@@ -205,7 +205,7 @@ namespace ElegantHousingSystem
             this.btnAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAdd.Font = new System.Drawing.Font("Segoe UI Semibold", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnAdd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(79)))), ((int)(((byte)(70)))), ((int)(((byte)(229)))));
-            this.btnAdd.Location = new System.Drawing.Point(28, 480);
+            this.btnAdd.Location = new System.Drawing.Point(28, 510);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(140, 38);
             this.btnAdd.TabIndex = 15;
@@ -216,7 +216,7 @@ namespace ElegantHousingSystem
             // txtIntroduction
             // 
             this.txtIntroduction.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtIntroduction.Location = new System.Drawing.Point(28, 395);
+            this.txtIntroduction.Location = new System.Drawing.Point(28, 428);
             this.txtIntroduction.Multiline = true;
             this.txtIntroduction.Name = "txtIntroduction";
             this.txtIntroduction.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -228,7 +228,7 @@ namespace ElegantHousingSystem
             this.lblIntroduction.AutoSize = true;
             this.lblIntroduction.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblIntroduction.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(107)))), ((int)(((byte)(114)))), ((int)(((byte)(128)))));
-            this.lblIntroduction.Location = new System.Drawing.Point(25, 377);
+            this.lblIntroduction.Location = new System.Drawing.Point(25, 410);
             this.lblIntroduction.Name = "lblIntroduction";
             this.lblIntroduction.Size = new System.Drawing.Size(144, 15);
             this.lblIntroduction.TabIndex = 13;
@@ -243,7 +243,7 @@ namespace ElegantHousingSystem
             "Available",
             "Rented",
             "Under Maintenance"});
-            this.cmbStatus.Location = new System.Drawing.Point(28, 335);
+            this.cmbStatus.Location = new System.Drawing.Point(28, 368);
             this.cmbStatus.Name = "cmbStatus";
             this.cmbStatus.Size = new System.Drawing.Size(292, 25);
             this.cmbStatus.TabIndex = 12;
@@ -253,7 +253,7 @@ namespace ElegantHousingSystem
             this.lblStatus.AutoSize = true;
             this.lblStatus.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(107)))), ((int)(((byte)(114)))), ((int)(((byte)(128)))));
-            this.lblStatus.Location = new System.Drawing.Point(25, 317);
+            this.lblStatus.Location = new System.Drawing.Point(25, 350);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(107, 15);
             this.lblStatus.TabIndex = 11;
@@ -262,7 +262,7 @@ namespace ElegantHousingSystem
             // txtDeposit
             // 
             this.txtDeposit.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtDeposit.Location = new System.Drawing.Point(28, 275);
+            this.txtDeposit.Location = new System.Drawing.Point(28, 308);
             this.txtDeposit.Name = "txtDeposit";
             this.txtDeposit.Size = new System.Drawing.Size(292, 25);
             this.txtDeposit.TabIndex = 10;
@@ -272,7 +272,7 @@ namespace ElegantHousingSystem
             this.lblDeposit.AutoSize = true;
             this.lblDeposit.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblDeposit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(107)))), ((int)(((byte)(114)))), ((int)(((byte)(128)))));
-            this.lblDeposit.Location = new System.Drawing.Point(25, 257);
+            this.lblDeposit.Location = new System.Drawing.Point(25, 290);
             this.lblDeposit.Name = "lblDeposit";
             this.lblDeposit.Size = new System.Drawing.Size(126, 15);
             this.lblDeposit.TabIndex = 9;
@@ -281,7 +281,7 @@ namespace ElegantHousingSystem
             // txtRentPrice
             // 
             this.txtRentPrice.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtRentPrice.Location = new System.Drawing.Point(28, 215);
+            this.txtRentPrice.Location = new System.Drawing.Point(28, 248);
             this.txtRentPrice.Name = "txtRentPrice";
             this.txtRentPrice.Size = new System.Drawing.Size(292, 25);
             this.txtRentPrice.TabIndex = 8;
@@ -291,7 +291,7 @@ namespace ElegantHousingSystem
             this.lblRentPrice.AutoSize = true;
             this.lblRentPrice.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblRentPrice.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(107)))), ((int)(((byte)(114)))), ((int)(((byte)(128)))));
-            this.lblRentPrice.Location = new System.Drawing.Point(25, 197);
+            this.lblRentPrice.Location = new System.Drawing.Point(25, 230);
             this.lblRentPrice.Name = "lblRentPrice";
             this.lblRentPrice.Size = new System.Drawing.Size(81, 15);
             this.lblRentPrice.TabIndex = 7;
@@ -300,7 +300,7 @@ namespace ElegantHousingSystem
             // txtArea
             // 
             this.txtArea.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtArea.Location = new System.Drawing.Point(28, 155);
+            this.txtArea.Location = new System.Drawing.Point(28, 188);
             this.txtArea.Name = "txtArea";
             this.txtArea.Size = new System.Drawing.Size(292, 25);
             this.txtArea.TabIndex = 6;
@@ -310,7 +310,7 @@ namespace ElegantHousingSystem
             this.lblArea.AutoSize = true;
             this.lblArea.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblArea.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(107)))), ((int)(((byte)(114)))), ((int)(((byte)(128)))));
-            this.lblArea.Location = new System.Drawing.Point(25, 137);
+            this.lblArea.Location = new System.Drawing.Point(25, 170);
             this.lblArea.Name = "lblArea";
             this.lblArea.Size = new System.Drawing.Size(107, 15);
             this.lblArea.TabIndex = 5;
@@ -319,7 +319,7 @@ namespace ElegantHousingSystem
             // txtAddress
             // 
             this.txtAddress.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtAddress.Location = new System.Drawing.Point(28, 125);
+            this.txtAddress.Location = new System.Drawing.Point(28, 128);
             this.txtAddress.Name = "txtAddress";
             this.txtAddress.Size = new System.Drawing.Size(292, 25);
             this.txtAddress.TabIndex = 4;
@@ -329,26 +329,28 @@ namespace ElegantHousingSystem
             this.lblAddress.AutoSize = true;
             this.lblAddress.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblAddress.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(107)))), ((int)(((byte)(114)))), ((int)(((byte)(128)))));
-            this.lblAddress.Location = new System.Drawing.Point(25, 107);
+            this.lblAddress.Location = new System.Drawing.Point(25, 110);
             this.lblAddress.Name = "lblAddress";
             this.lblAddress.Size = new System.Drawing.Size(103, 15);
             this.lblAddress.TabIndex = 3;
             this.lblAddress.Text = "Property Address:";
             // 
-            // txtHouseID
+            // cmbHouseID
             // 
-            this.txtHouseID.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtHouseID.Location = new System.Drawing.Point(28, 75);
-            this.txtHouseID.Name = "txtHouseID";
-            this.txtHouseID.Size = new System.Drawing.Size(292, 25);
-            this.txtHouseID.TabIndex = 2;
+            this.cmbHouseID.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbHouseID.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cmbHouseID.FormattingEnabled = true;
+            this.cmbHouseID.Location = new System.Drawing.Point(28, 68);
+            this.cmbHouseID.Name = "cmbHouseID";
+            this.cmbHouseID.Size = new System.Drawing.Size(292, 25);
+            this.cmbHouseID.TabIndex = 2;
             // 
             // lblHouseID
             // 
             this.lblHouseID.AutoSize = true;
             this.lblHouseID.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblHouseID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(107)))), ((int)(((byte)(114)))), ((int)(((byte)(128)))));
-            this.lblHouseID.Location = new System.Drawing.Point(25, 57);
+            this.lblHouseID.Location = new System.Drawing.Point(25, 50);
             this.lblHouseID.Name = "lblHouseID";
             this.lblHouseID.Size = new System.Drawing.Size(117, 15);
             this.lblHouseID.TabIndex = 1;
@@ -433,7 +435,7 @@ namespace ElegantHousingSystem
         private System.Windows.Forms.Panel pnlInputs;
         private System.Windows.Forms.Label lblInputHeader;
         private System.Windows.Forms.Label lblHouseID;
-        private System.Windows.Forms.TextBox txtHouseID;
+        private System.Windows.Forms.ComboBox cmbHouseID;
         private System.Windows.Forms.Label lblAddress;
         private System.Windows.Forms.TextBox txtAddress;
         private System.Windows.Forms.Label lblArea;
