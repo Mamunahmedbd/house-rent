@@ -47,9 +47,23 @@ BEGIN
     CREATE TABLE [dbo].[Tenants] (
         [TenantID] INT IDENTITY(1,1) PRIMARY KEY,
         [FullName] NVARCHAR(100) NOT NULL,
-        [Phone] NVARCHAR(50) NOT NULL,
-        [Email] NVARCHAR(100) NULL
+        [Gender] NVARCHAR(20) NULL,
+        [Phone] NVARCHAR(30) NOT NULL,
+        [Email] NVARCHAR(100) NULL,
+        [IDNumber] NVARCHAR(50) NULL,
+        [Occupation] NVARCHAR(100) NULL,
+        [Address] NVARCHAR(MAX) NULL,
+        [EmergencyContact] NVARCHAR(30) NULL,
+        [Status] NVARCHAR(30) NULL,
+        [RegisteredDate] DATETIME NULL
     );
+END
+GO
+
+-- 3a. Unique index on Tenant ID Number (filtered to allow multiple NULLs)
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'UX_Tenants_IDNumber' AND object_id = OBJECT_ID(N'[dbo].[Tenants]'))
+BEGIN
+    CREATE UNIQUE INDEX UX_Tenants_IDNumber ON [dbo].[Tenants]([IDNumber]) WHERE [IDNumber] IS NOT NULL;
 END
 GO
 

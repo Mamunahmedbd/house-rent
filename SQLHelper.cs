@@ -125,6 +125,27 @@ namespace DataAccess
                             );
                         END";
                     cmd.ExecuteNonQuery();
+
+                    // Enforce unique ID Number on Tenants (filtered to allow multiple NULLs)
+                    cmd.CommandText = @"
+                        IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'UX_Tenants_IDNumber' AND object_id = OBJECT_ID(N'[dbo].[Tenants]'))
+                        BEGIN
+                            CREATE UNIQUE INDEX UX_Tenants_IDNumber ON [dbo].[Tenants]([IDNumber]) WHERE [IDNumber] IS NOT NULL;
+                        END";
+                    cmd.ExecuteNonQuery();
+
+                    // Create RentalProperties table
+                    cmd.CommandText = @"
+                        IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[RentalProperties]') AND type in (N'U'))
+                        BEGIN
+                            CREATE TABLE [dbo].[RentalProperties] (
+                                [RentalID] INT IDENTITY(1,1) PRIMARY KEY,
+                                [Address] NVARCHAR(255) NOT NULL,
+                                [RentValue] NVARCHAR(100) NOT NULL,
+                                [Status] NVARCHAR(50) NOT NULL
+                            );
+                        END";
+                    cmd.ExecuteNonQuery();
                 }
             }
         }

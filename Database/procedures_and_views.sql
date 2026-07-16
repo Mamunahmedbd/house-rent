@@ -66,3 +66,65 @@ BEGIN
     SET @Status = 1; -- Success
 END;
 GO
+
+-- 4. Create View for Active Tenants
+IF EXISTS (SELECT * FROM sys.views WHERE name = 'vw_ActiveTenants')
+    DROP VIEW vw_ActiveTenants;
+GO
+
+CREATE VIEW vw_ActiveTenants AS
+SELECT 
+    TenantID,
+    FullName,
+    Gender,
+    Phone,
+    Email,
+    IDNumber,
+    Occupation,
+    EmergencyContact,
+    RegisteredDate
+FROM 
+    dbo.Tenants
+WHERE 
+    Status = 'Active';
+GO
+
+-- 5. Create Stored Procedure to Register a New Tenant
+IF EXISTS (SELECT * FROM sys.procedures WHERE name = 'sp_CreateTenant')
+    DROP PROCEDURE sp_CreateTenant;
+GO
+
+CREATE PROCEDURE sp_CreateTenant
+    @FullName NVARCHAR(100),
+    @Gender NVARCHAR(20),
+    @Phone NVARCHAR(30),
+    @Email NVARCHAR(100),
+    @IDNumber NVARCHAR(50),
+    @Occupation NVARCHAR(100),
+    @Address NVARCHAR(MAX),
+    @EmergencyContact NVARCHAR(30),
+    @Status NVARCHAR(30),
+    @TenantID INT OUTPUT,
+    @Result INT OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Reject duplicate ID Number (when provided)
+    IF @IDNumber IS NOT NULL AND @IDNumber <> ''
+       AND EXISTS (SELECT 1 FROM dbo.Tenants WHERE IDNumber = @IDNumber)
+    BEGIN
+        SET @Result = -1; -- Duplicate ID Number
+        RETURN;
+    END
+
+    IF @Status IS NULL OR @Status = ''
+        SET @Status = 'Active';
+
+    INSERT INTO dbo.Tenants (FullName, Gender, Phone, Email, IDNumber, Occupation, Address, EmergencyContact, Status, RegisteredDate)
+    VALUES (@FullName, @Gender, @Phone, @Email, @IDNumber, @Occupation, @Address, @EmergencyContact, @Status, GETDATE());
+
+    SET @TenantID = SCOPE_IDENTITY();
+    SET @Result = 1; -- Success
+END;
+GO
