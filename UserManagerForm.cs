@@ -8,6 +8,8 @@ namespace ElegantHousingSystem
 {
     public partial class UserManagerForm : Form
     {
+        private DataTable userDataTable = null;
+
         public UserManagerForm()
         {
             InitializeComponent();
@@ -17,14 +19,14 @@ namespace ElegantHousingSystem
 
         private void SetupFormTheme()
         {
-            this.Text = "User Management System";
-            this.Size = new Size(850, 520);
-            this.BackColor = Color.FromArgb(255, 240, 245); // Lavender Blush theme
+            this.Text = "System User Directory";
+            this.Size = new Size(950, 560);
+            this.BackColor = Color.FromArgb(243, 244, 246); // Modern Light Gray Background
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
 
-            // Security check: Disable modification buttons if the logged-in user is not an Admin
+            // Display Access Warning if user is not Admin
             if (Form1.CurrentUserRole != "Admin")
             {
                 lblRoleWarning.Visible = true;
@@ -32,12 +34,16 @@ namespace ElegantHousingSystem
                 btnUpdate.Enabled = false;
                 btnDelete.Enabled = false;
                 btnClear.Enabled = false;
-                
+
                 txtUsername.Enabled = false;
                 txtPassword.Enabled = false;
                 cmbRole.Enabled = false;
                 txtEmail.Enabled = false;
                 txtPhone.Enabled = false;
+                
+                btnAdd.BackColor = Color.FromArgb(229, 231, 235);
+                btnUpdate.BackColor = Color.FromArgb(229, 231, 235);
+                btnDelete.BackColor = Color.FromArgb(229, 231, 235);
             }
             else
             {
@@ -53,13 +59,14 @@ namespace ElegantHousingSystem
                 DataSet ds = SQLHelper.GetData(sql);
                 if (ds != null && ds.Tables.Count > 0)
                 {
-                    dgvUsers.DataSource = ds.Tables[0];
+                    userDataTable = ds.Tables[0];
+                    dgvUsers.DataSource = userDataTable;
                     SetupGridStyle();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Failed to load user data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Failed to load user data: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -67,24 +74,40 @@ namespace ElegantHousingSystem
         {
             if (dgvUsers.Columns.Count > 0)
             {
-                dgvUsers.Columns["UserID"].HeaderText = "User ID";
-                dgvUsers.Columns["UserID"].Width = 80;
-                dgvUsers.Columns["Username"].HeaderText = "Username";
-                dgvUsers.Columns["Username"].Width = 120;
-                dgvUsers.Columns["Password"].HeaderText = "Password";
-                dgvUsers.Columns["Password"].Width = 100;
-                dgvUsers.Columns["Role"].HeaderText = "Role";
-                dgvUsers.Columns["Role"].Width = 100;
-                dgvUsers.Columns["Email"].HeaderText = "Email";
-                dgvUsers.Columns["Email"].Width = 180;
-                dgvUsers.Columns["Phone"].HeaderText = "Phone";
-                dgvUsers.Columns["Phone"].Width = 120;
+                // Set Header styling
+                dgvUsers.EnableHeadersVisualStyles = false;
+                dgvUsers.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(31, 41, 55); // Match header panel color
+                dgvUsers.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                dgvUsers.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI Semibold", 9.5F, FontStyle.Bold);
+                dgvUsers.ColumnHeadersHeight = 35;
+                dgvUsers.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
 
-                dgvUsers.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(252, 230, 235);
+                // Adjust headers text
+                dgvUsers.Columns["UserID"].HeaderText = "User ID";
+                dgvUsers.Columns["UserID"].Width = 70;
+                dgvUsers.Columns["Username"].HeaderText = "Username";
+                dgvUsers.Columns["Username"].Width = 110;
+                dgvUsers.Columns["Password"].HeaderText = "Password";
+                dgvUsers.Columns["Password"].Width = 90;
+                dgvUsers.Columns["Role"].HeaderText = "Role";
+                dgvUsers.Columns["Role"].Width = 90;
+                dgvUsers.Columns["Email"].HeaderText = "Email";
+                dgvUsers.Columns["Email"].Width = 150;
+                dgvUsers.Columns["Phone"].HeaderText = "Phone";
+                dgvUsers.Columns["Phone"].Width = 110;
+
+                // Row stylings
+                dgvUsers.RowHeadersVisible = false;
+                dgvUsers.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(249, 250, 251);
+                dgvUsers.DefaultCellStyle.SelectionBackColor = Color.FromArgb(224, 231, 255); // Indigo selection
+                dgvUsers.DefaultCellStyle.SelectionForeColor = Color.FromArgb(49, 46, 129);
+                dgvUsers.DefaultCellStyle.Font = new Font("Segoe UI", 9F);
+                
                 dgvUsers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
                 dgvUsers.MultiSelect = false;
                 dgvUsers.AllowUserToAddRows = false;
                 dgvUsers.ReadOnly = true;
+                dgvUsers.GridColor = Color.FromArgb(229, 231, 235);
             }
         }
 
@@ -99,7 +122,7 @@ namespace ElegantHousingSystem
                 txtEmail.Text = row.Cells["Email"].Value.ToString();
                 txtPhone.Text = row.Cells["Phone"].Value.ToString();
 
-                // Prevent editing admin username to avoid lockouts
+                // Prevent modifying primary admin credentials to protect access
                 if (txtUsername.Text == "admin")
                 {
                     txtUsername.Enabled = false;
@@ -109,6 +132,25 @@ namespace ElegantHousingSystem
                 {
                     txtUsername.Enabled = true;
                     cmbRole.Enabled = true;
+                }
+            }
+        }
+
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            if (userDataTable != null)
+            {
+                string searchVal = txtSearch.Text.Trim().Replace("'", "''");
+                if (string.IsNullOrEmpty(searchVal))
+                {
+                    userDataTable.DefaultView.RowFilter = "";
+                }
+                else
+                {
+                    userDataTable.DefaultView.RowFilter = string.Format(
+                        "Username LIKE '%{0}%' OR Role LIKE '%{0}%' OR Email LIKE '%{0}%' OR Phone LIKE '%{0}%'",
+                        searchVal
+                    );
                 }
             }
         }
@@ -123,18 +165,17 @@ namespace ElegantHousingSystem
 
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(role))
             {
-                MessageBox.Show("Username, Password, and Role are required!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Username, Password, and Role are mandatory!", "Validation Alert", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             try
             {
-                // Check if user already exists
                 string checkSql = string.Format("SELECT COUNT(*) FROM Users WHERE Username = '{0}'", username.Replace("'", "''"));
                 DataSet ds = SQLHelper.GetData(checkSql);
                 if (ds != null && ds.Tables.Count > 0 && Convert.ToInt32(ds.Tables[0].Rows[0][0]) > 0)
                 {
-                    MessageBox.Show("Username already exists!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("This Username is already registered!", "Registration Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -147,17 +188,17 @@ namespace ElegantHousingSystem
                     phone.Replace("'", "''")
                 );
 
-                int result = SQLHelper.ExecuteCmd(insertSql);
-                if (result > 0)
+                int res = SQLHelper.ExecuteCmd(insertSql);
+                if (res > 0)
                 {
-                    MessageBox.Show("User added successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("User profile registered successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     ClearInputs();
                     LoadUserData();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Failed to add user: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Registration failed: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -165,7 +206,7 @@ namespace ElegantHousingSystem
         {
             if (dgvUsers.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Please select a user to update.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select a user to update.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -178,20 +219,19 @@ namespace ElegantHousingSystem
 
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(role))
             {
-                MessageBox.Show("Username, Password, and Role are required!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Username, Password, and Role are mandatory!", "Validation Alert", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             try
             {
-                // If username is changing, ensure new username is unique
                 if (originalUsername != username)
                 {
                     string checkSql = string.Format("SELECT COUNT(*) FROM Users WHERE Username = '{0}'", username.Replace("'", "''"));
                     DataSet ds = SQLHelper.GetData(checkSql);
                     if (ds != null && ds.Tables.Count > 0 && Convert.ToInt32(ds.Tables[0].Rows[0][0]) > 0)
                     {
-                        MessageBox.Show("New username already exists!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("This Username is already in use by another account!", "Registration Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
                 }
@@ -206,17 +246,17 @@ namespace ElegantHousingSystem
                     originalUsername.Replace("'", "''")
                 );
 
-                int result = SQLHelper.ExecuteCmd(updateSql);
-                if (result > 0)
+                int res = SQLHelper.ExecuteCmd(updateSql);
+                if (res > 0)
                 {
-                    MessageBox.Show("User updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("User profile updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     ClearInputs();
                     LoadUserData();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Failed to update user: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Update failed: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -224,7 +264,7 @@ namespace ElegantHousingSystem
         {
             if (dgvUsers.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Please select a user to delete.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select a user to delete.", "Selection Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -232,27 +272,33 @@ namespace ElegantHousingSystem
 
             if (username == "admin")
             {
-                MessageBox.Show("The primary admin user cannot be deleted!", "Forbidden", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("The primary admin account cannot be deleted to prevent system lockouts!", "Access Denied", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            DialogResult confirm = MessageBox.Show($"Are you sure you want to delete user '{username}'?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult confirm = MessageBox.Show(
+                string.Format("Are you sure you want to permanently delete user '{0}'?", username),
+                "Confirm Deletion",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+            
             if (confirm == DialogResult.Yes)
             {
                 try
                 {
                     string deleteSql = string.Format("DELETE FROM Users WHERE Username = '{0}'", username.Replace("'", "''"));
-                    int result = SQLHelper.ExecuteCmd(deleteSql);
-                    if (result > 0)
+                    int res = SQLHelper.ExecuteCmd(deleteSql);
+                    if (res > 0)
                     {
-                        MessageBox.Show("User deleted successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("User profile deleted successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         ClearInputs();
                         LoadUserData();
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Failed to delete user: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Deletion failed: " + ex.Message, "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -269,6 +315,8 @@ namespace ElegantHousingSystem
             cmbRole.SelectedIndex = -1;
             txtEmail.Text = "";
             txtPhone.Text = "";
+            txtSearch.Text = "";
+            
             if (Form1.CurrentUserRole == "Admin")
             {
                 txtUsername.Enabled = true;
