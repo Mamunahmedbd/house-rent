@@ -18,38 +18,55 @@ namespace ElegantHousingSystem
             Application.Exit();
         }
 
+        private void ShowFormInContentPanel(Form childForm)
+        {
+            // Clear current controls in content panel
+            pnlContent.Controls.Clear();
+            
+            // Setup child form properties for embedding
+            childForm.TopLevel = false;
+            childForm.FormBorderStyle = FormBorderStyle.None;
+            
+            // Center the form inside pnlContent
+            childForm.Location = new System.Drawing.Point(
+                (pnlContent.Width - childForm.Width) / 2,
+                (pnlContent.Height - childForm.Height) / 2
+            );
+            childForm.Anchor = AnchorStyles.None; // Maintain centering on resize
+            
+            // Add to panel and show
+            pnlContent.Controls.Add(childForm);
+            childForm.Show();
+        }
+
         private void btnHouseManager_Click(object sender, EventArgs e)
         {
-            HouseManagerFrom houseForm = new HouseManagerFrom();
-            houseForm.Show();
+            ShowFormInContentPanel(new HouseManagerFrom());
         }
+
         private void button2_Click(object sender, EventArgs e)
         {
-            // Open the tenant management form
-            TenantManagerFrom tenantForm = new TenantManagerFrom();
-            tenantForm.Show();
+            ShowFormInContentPanel(new TenantManagerFrom());
         }
 
         private void btnRentalManager_Click(object sender, EventArgs e)
         {
-
+            ShowFormInContentPanel(new RentalManagerForm());
         }
 
         private void label2_Click(object sender, EventArgs e)
         {
-            // You can leave this empty or add specific code here
+            ShowFormInContentPanel(new RentalManagerForm());
         }
 
         private void lblRentalManage_Click(object sender, EventArgs e)
         {
-            RentalManagerForm rentalFrom = new RentalManagerForm();
-            rentalFrom.Show();
+            ShowFormInContentPanel(new RentalManagerForm());
         }
 
         private void btnUserManager_Click(object sender, EventArgs e)
         {
-            UserManagerForm userForm = new UserManagerForm();
-            userForm.Show();
+            ShowFormInContentPanel(new UserManagerForm());
         }
     }
 }

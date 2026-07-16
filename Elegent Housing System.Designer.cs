@@ -41,6 +41,7 @@ namespace ElegantHousingSystem
             this.label2 = new System.Windows.Forms.Label();
             this.btnUserManager = new System.Windows.Forms.Button();
             this.pictureBoxUser = new System.Windows.Forms.PictureBox();
+            this.pnlContent = new System.Windows.Forms.Panel();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
@@ -117,7 +118,7 @@ namespace ElegantHousingSystem
             this.label1.Font = new System.Drawing.Font("Gabriola", 48F, ((System.Drawing.FontStyle)(((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic) 
                 | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(0)))), ((int)(((byte)(64)))));
-            this.label1.Location = new System.Drawing.Point(451, 0);
+            this.label1.Location = new System.Drawing.Point(231, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(538, 118);
             this.label1.TabIndex = 1;
@@ -126,12 +127,23 @@ namespace ElegantHousingSystem
             // pictureBox4
             // 
             this.pictureBox4.Image = global::ElegantHousingSystem.Properties.Resources.resident;
-            this.pictureBox4.Location = new System.Drawing.Point(304, 12);
+            this.pictureBox4.Location = new System.Drawing.Point(84, 12);
             this.pictureBox4.Name = "pictureBox4";
             this.pictureBox4.Size = new System.Drawing.Size(127, 89);
             this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox4.TabIndex = 2;
             this.pictureBox4.TabStop = false;
+            // 
+            // pnlContent
+            // 
+            this.pnlContent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.pnlContent.Controls.Add(this.pictureBox4);
+            this.pnlContent.Controls.Add(this.label1);
+            this.pnlContent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlContent.Location = new System.Drawing.Point(220, 0);
+            this.pnlContent.Name = "pnlContent";
+            this.pnlContent.Size = new System.Drawing.Size(1150, 749);
+            this.pnlContent.TabIndex = 2;
             // 
             // pictureBox5
             // 
@@ -219,8 +231,7 @@ namespace ElegantHousingSystem
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.ClientSize = new System.Drawing.Size(1370, 749);
-            this.Controls.Add(this.pictureBox4);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.pnlContent);
             this.Controls.Add(this.panel1);
             this.Font = new System.Drawing.Font("Segoe Script", 18F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(8, 9, 8, 9);
@@ -252,6 +263,7 @@ namespace ElegantHousingSystem
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnUserManager;
         private System.Windows.Forms.PictureBox pictureBoxUser;
+        private System.Windows.Forms.Panel pnlContent;
     }
 }
 
