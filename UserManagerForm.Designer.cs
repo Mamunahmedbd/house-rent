@@ -126,7 +126,7 @@ namespace ElegantHousingSystem
             this.pnlInputs.Dock = System.Windows.Forms.DockStyle.Left;
             this.pnlInputs.Location = new System.Drawing.Point(0, 80);
             this.pnlInputs.Name = "pnlInputs";
-            this.pnlInputs.Size = new System.Drawing.Size(350, 480);
+            this.pnlInputs.Size = new System.Drawing.Size(350, 520);
             this.pnlInputs.TabIndex = 1;
             // 
             // lblInputHeader
@@ -315,7 +315,7 @@ namespace ElegantHousingSystem
             this.pnlGrid.Location = new System.Drawing.Point(350, 80);
             this.pnlGrid.Name = "pnlGrid";
             this.pnlGrid.Padding = new System.Windows.Forms.Padding(20);
-            this.pnlGrid.Size = new System.Drawing.Size(600, 480);
+            this.pnlGrid.Size = new System.Drawing.Size(600, 520);
             this.pnlGrid.TabIndex = 2;
             // 
             // lblSearch
@@ -358,7 +358,7 @@ namespace ElegantHousingSystem
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(950, 560);
+            this.ClientSize = new System.Drawing.Size(950, 600);
             this.Controls.Add(this.pnlGrid);
             this.Controls.Add(this.pnlInputs);
             this.Controls.Add(this.pnlHeader);

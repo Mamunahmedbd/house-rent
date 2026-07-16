@@ -20,7 +20,7 @@ namespace ElegantHousingSystem
         private void SetupFormTheme()
         {
             this.Text = "System User Directory";
-            this.Size = new Size(950, 560);
+            this.Size = new Size(950, 600);
             this.BackColor = Color.FromArgb(243, 244, 246); // Modern Light Gray Background
             this.StartPosition = FormStartPosition.Manual;
             this.FormBorderStyle = FormBorderStyle.None;

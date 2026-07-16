@@ -7,15 +7,34 @@ namespace ElegantHousingSystem
     {
         public static string CurrentUsername = "";
         public static string CurrentUserRole = "";
+        private Form activeChildForm = null;
 
         public Form1()
         {
             InitializeComponent();
+            this.pnlContent.SizeChanged += (s, e) => {
+                if (activeChildForm != null)
+                {
+                    CenterChildForm(activeChildForm);
+                }
+            };
         }
 
         private void pictureBox5_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void CenterChildForm(Form childForm)
+        {
+            if (childForm == null || childForm.IsDisposed) return;
+            
+            // Center the form inside pnlContent
+            // Use Math.Max(0, ...) to ensure coordinates never go negative, allowing full scrolling
+            childForm.Location = new System.Drawing.Point(
+                Math.Max(0, (pnlContent.Width - childForm.Width) / 2),
+                Math.Max(0, (pnlContent.Height - childForm.Height) / 2)
+            );
         }
 
         private void ShowFormInContentPanel(Form childForm)
@@ -42,13 +61,11 @@ namespace ElegantHousingSystem
             // Add to panel first to ensure parent-relative coordinates are active
             pnlContent.Controls.Add(childForm);
             
-            // Center the form inside pnlContent
-            // Use Math.Max(0, ...) to ensure coordinates never go negative, allowing full scrolling
-            childForm.Location = new System.Drawing.Point(
-                Math.Max(0, (pnlContent.Width - childForm.Width) / 2),
-                Math.Max(0, (pnlContent.Height - childForm.Height) / 2)
-            );
-            childForm.Anchor = AnchorStyles.None; // Maintain centering on resize
+            // Save active child form reference for size change event centering
+            activeChildForm = childForm;
+            
+            // Position child form initially
+            CenterChildForm(childForm);
             
             childForm.Show();
         }
