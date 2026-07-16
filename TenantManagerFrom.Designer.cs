@@ -33,7 +33,7 @@
             this.lblSubTitle = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
             this.pnlInputs = new System.Windows.Forms.Panel();
-            this.lblInputHeader = new System.Windows.Forms.Button();
+            this.lblInputHeader = new System.Windows.Forms.Label();
             this.btnClear = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnUpdate = new System.Windows.Forms.Button();
@@ -315,7 +315,7 @@
             // lblIDNumber
             //
             this.lblIDNumber.AutoSize = true;
-            this.lblIDFont: this.lblIDNumber.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblIDNumber.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblIDNumber.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(107)))), ((int)(((byte)(114)))), ((int)(((byte)(128)))));
             this.lblIDNumber.Location = new System.Drawing.Point(25, 228);
             this.lblIDNumber.Name = "lblIDNumber";

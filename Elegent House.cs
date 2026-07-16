@@ -29,6 +29,7 @@ namespace ElegantHousingSystem
             this.lblTitle.MouseDown += DragForm_MouseDown;
             this.lblSubtitle.MouseDown += DragForm_MouseDown;
             this.picLogo.MouseDown += DragForm_MouseDown;
+            this.picBanner.MouseDown += DragForm_MouseDown;
 
             // Highlight border (panel BackColor) when text box gets focus
             txtUser.Enter += (s, e) => pnlUserBorder.BackColor = System.Drawing.Color.FromArgb(59, 130, 246);
@@ -36,6 +37,32 @@ namespace ElegantHousingSystem
 
             txtPass.Enter += (s, e) => pnlPassBorder.BackColor = System.Drawing.Color.FromArgb(59, 130, 246);
             txtPass.Leave += (s, e) => pnlPassBorder.BackColor = System.Drawing.Color.FromArgb(40, 48, 64);
+
+            // Load banner image dynamically with robust local path resolution
+            try
+            {
+                string bannerPath = System.IO.Path.Combine(Application.StartupPath, "Resources", "login_banner.png");
+                if (System.IO.File.Exists(bannerPath))
+                {
+                    picBanner.Image = System.Drawing.Image.FromFile(bannerPath);
+                }
+                else
+                {
+                    string fallbackPath = System.IO.Path.Combine(Application.StartupPath, "..", "..", "Resources", "login_banner.png");
+                    if (System.IO.File.Exists(fallbackPath))
+                    {
+                        picBanner.Image = System.Drawing.Image.FromFile(fallbackPath);
+                    }
+                    else
+                    {
+                        picBanner.BackColor = System.Drawing.Color.FromArgb(24, 28, 36);
+                    }
+                }
+            }
+            catch
+            {
+                picBanner.BackColor = System.Drawing.Color.FromArgb(24, 28, 36);
+            }
         }
 
         private void DragForm_MouseDown(object sender, MouseEventArgs e)
