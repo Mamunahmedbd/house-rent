@@ -22,8 +22,8 @@ namespace ElegantHousingSystem
             this.Text = "System User Directory";
             this.Size = new Size(950, 560);
             this.BackColor = Color.FromArgb(243, 244, 246); // Modern Light Gray Background
-            this.StartPosition = FormStartPosition.CenterScreen;
-            this.FormBorderStyle = FormBorderStyle.FixedDialog;
+            this.StartPosition = FormStartPosition.Manual;
+            this.FormBorderStyle = FormBorderStyle.None;
             this.MaximizeBox = false;
 
             // Display Access Warning if user is not Admin
