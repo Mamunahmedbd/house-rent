@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,6 +14,15 @@ namespace ElegantHousingSystem
         [STAThread]
         static void Main()
         {
+            try
+            {
+                DataAccess.SQLHelper.InitializeDatabase();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Database initialization failed: " + ex.Message, "DB Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form2());

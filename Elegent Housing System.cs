@@ -1,10 +1,13 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 
 namespace ElegantHousingSystem
 {
     public partial class Form1 : Form
     {
+        public static string CurrentUsername = "";
+        public static string CurrentUserRole = "";
+
         public Form1()
         {
             InitializeComponent();
@@ -41,6 +44,12 @@ namespace ElegantHousingSystem
         {
             RentalManagerForm rentalFrom = new RentalManagerForm();
             rentalFrom.Show();
+        }
+
+        private void btnUserManager_Click(object sender, EventArgs e)
+        {
+            UserManagerForm userForm = new UserManagerForm();
+            userForm.Show();
         }
     }
 }

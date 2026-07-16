@@ -1,4 +1,4 @@
-﻿namespace ElegantHousingSystem
+namespace ElegantHousingSystem
 {
     partial class Form1
     {
@@ -39,12 +39,15 @@
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.btnUserManager = new System.Windows.Forms.Button();
+            this.pictureBoxUser = new System.Windows.Forms.PictureBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxUser)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -58,6 +61,8 @@
             this.panel1.Controls.Add(this.pictureBox2);
             this.panel1.Controls.Add(this.pictureBox1);
             this.panel1.Controls.Add(this.HouseManager);
+            this.panel1.Controls.Add(this.btnUserManager);
+            this.panel1.Controls.Add(this.pictureBoxUser);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
@@ -71,7 +76,7 @@
             this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button3.Font = new System.Drawing.Font("Segoe Script", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.button3.Location = new System.Drawing.Point(73, 388);
+            this.button3.Location = new System.Drawing.Point(73, 490);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(112, 23);
             this.button3.TabIndex = 7;
@@ -131,13 +136,37 @@
             // pictureBox5
             // 
             this.pictureBox5.Image = global::ElegantHousingSystem.Properties.Resources._switch;
-            this.pictureBox5.Location = new System.Drawing.Point(12, 388);
+            this.pictureBox5.Location = new System.Drawing.Point(12, 490);
             this.pictureBox5.Name = "pictureBox5";
             this.pictureBox5.Size = new System.Drawing.Size(57, 35);
             this.pictureBox5.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox5.TabIndex = 8;
             this.pictureBox5.TabStop = false;
             this.pictureBox5.Click += new System.EventHandler(this.pictureBox5_Click);
+            // 
+            // pictureBoxUser
+            // 
+            this.pictureBoxUser.Image = global::ElegantHousingSystem.Properties.Resources.leader;
+            this.pictureBoxUser.Location = new System.Drawing.Point(12, 388);
+            this.pictureBoxUser.Name = "pictureBoxUser";
+            this.pictureBoxUser.Size = new System.Drawing.Size(57, 35);
+            this.pictureBoxUser.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBoxUser.TabIndex = 10;
+            this.pictureBoxUser.TabStop = false;
+            // 
+            // btnUserManager
+            // 
+            this.btnUserManager.FlatAppearance.BorderSize = 0;
+            this.btnUserManager.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnUserManager.Font = new System.Drawing.Font("Segoe Script", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnUserManager.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.btnUserManager.Location = new System.Drawing.Point(73, 388);
+            this.btnUserManager.Name = "btnUserManager";
+            this.btnUserManager.Size = new System.Drawing.Size(120, 31);
+            this.btnUserManager.TabIndex = 9;
+            this.btnUserManager.Text = "Manage Users";
+            this.btnUserManager.UseVisualStyleBackColor = true;
+            this.btnUserManager.Click += new System.EventHandler(this.btnUserManager_Click);
             // 
             // pictureBox3
             // 
@@ -221,6 +250,8 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.PictureBox pictureBox5;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button btnUserManager;
+        private System.Windows.Forms.PictureBox pictureBoxUser;
     }
 }
 

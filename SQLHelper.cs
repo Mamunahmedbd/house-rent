@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,13 +7,73 @@ using System.Data.SqlClient;
 
 namespace DataAccess
 {
-    //百度： C#  数据库访问类
-    //帮助我们进行数据库访问--简化
     public class SQLHelper
     {
-        //1、Create Database 建立数据库连接串curity Info=Fa
-        static string connStr = "Integrated Security=SSPI;Persist Selse;Initial Catalog=HouseDB;Data Source=.\\SQLEXPRESS";
-        //Method to query data from HouseDB
+        public static string connStr = "Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=HouseRental;Data Source=.\\SQLEXPRESS";
+
+        public static void InitializeDatabase()
+        {
+            string masterConnStr = connStr.Replace("Initial Catalog=HouseRental", "Initial Catalog=master");
+            using (SqlConnection conn = new SqlConnection(masterConnStr))
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT database_id FROM sys.databases WHERE name = 'HouseRental'";
+                    object dbId = cmd.ExecuteScalar();
+                    if (dbId == null || dbId == DBNull.Value)
+                    {
+                        cmd.CommandText = "CREATE DATABASE HouseRental";
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+
+            using (SqlConnection conn = new SqlConnection(connStr))
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    // Create Users table
+                    cmd.CommandText = @"
+                        IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND type in (N'U'))
+                        BEGIN
+                            CREATE TABLE [dbo].[Users] (
+                                [UserID] INT IDENTITY(1,1) PRIMARY KEY,
+                                [Username] NVARCHAR(50) NOT NULL UNIQUE,
+                                [Password] NVARCHAR(50) NOT NULL,
+                                [Role] NVARCHAR(50) NOT NULL,
+                                [Email] NVARCHAR(100) NULL,
+                                [Phone] NVARCHAR(50) NULL
+                            );
+                            
+                            INSERT INTO [dbo].[Users] ([Username], [Password], [Role], [Email], [Phone]) 
+                            VALUES ('admin', '1234', 'Admin', 'admin@rental.com', '1234567890');
+                        END";
+                    cmd.ExecuteNonQuery();
+
+                    // Create HouseInfo table compatible with both schemas
+                    cmd.CommandText = @"
+                        IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[HouseInfo]') AND type in (N'U'))
+                        BEGIN
+                            CREATE TABLE [dbo].[HouseInfo] (
+                                [HouseID] NVARCHAR(50) PRIMARY KEY,
+                                [CategoryID] NVARCHAR(50) NULL,
+                                [Address] NVARCHAR(255) NULL,
+                                [HouseAddress] NVARCHAR(255) NULL,
+                                [Area] NVARCHAR(100) NULL,
+                                [HouseArea] NVARCHAR(100) NULL,
+                                [RentPrice] NVARCHAR(100) NULL,
+                                [Deposit] NVARCHAR(100) NULL,
+                                [IsVacant] NVARCHAR(50) NULL,
+                                [Status] NVARCHAR(50) NULL,
+                                [Introduction] NVARCHAR(MAX) NULL
+                            );
+                        END";
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
         public static DataSet GetData(string sqlStr)
         {
             //1、建立数据库连接串
